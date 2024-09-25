@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
-  <meta name="description" content="Scalable Semantic 3D Mapping of Coral Reefs with Deep Learning">
-  <meta property="og:title" content="Scalable Semantic 3D Mapping of Coral Reefs with Deep Learning"/>
-  <meta property="og:description" content="Scalable Semantic 3D Mapping of Coral Reefs with Deep Learning"/>
-  <meta property="og:url" content="http://josauder.github.io/deepreefmap"/>
+  <meta name="description" content="Self-Supervised Underwater Caustics Removal and Descattering via Deep Monocular SLAM">
+  <meta property="og:title" content="Self-Supervised Underwater Caustics Removal and Descattering via Deep Monocular SLAM"/>
+  <meta property="og:description" content="Self-Supervised Underwater Caustics Removal and Descattering via Deep Monocular SLAM"/>
+  <meta property="og:url" content="http://josauder.github.io/backscatternet_causticsnet"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-  <meta property="og:image" content="static/image/your_banner_image.png" />
-  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image" content="static/image/caustics_icon.png" />
+  <meta property="og:image:width" content="630"/>
   <meta property="og:image:height" content="630"/>
 
 
-  <meta name="twitter:title" content="Scalable Semantic 3D Mapping of Coral Reefs with Deep Learning">
-  <meta name="twitter:description" content="Scalable Semantic 3D Mapping of Coral Reefs with Deep Learning">
+  <meta name="twitter:title" content="Self-Supervised Underwater Caustics Removal and Descattering via Deep Monocular SLAM">
+  <meta name="twitter:description" content="Self-Supervised Underwater Caustics Removal and Descattering via Deep Monocular SLAM">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
   <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
   <meta name="twitter:card" content="summary_large_image">
@@ -166,7 +166,12 @@
       <img src="static/images/backscatter.png" alt="Examples from BackscatterNet" width="100%" />
       <p>
         <br>
-        TODO Write some text here
+        We use self-supervised monocular SLAM neural networks to formulate a learning objective to estimate and remove the backscatter from underwater images.
+        Following the physical model of underwater image formation, the image arriving at the camera can be separated in the direct signal and the backscatter, which acts additively on the raw signal arriving at the camera sensor.
+        With some approximations, the backscatter of an image is governed by a handful of coefficients and the depth (z-axis). We train a neural network to predict the backscatter coefficients that minimize the re-projection error to a random overlapping image.
+        This learning objective allows to predict the backscatter of single unseen images and remove it. An overview of the training method is found below, for more details, consult the paper.
+        <br>
+        <br>
       </p>
     <img src="static/images/method_color_flat.png" alt="Overview of BackscatterNet" width="50%" style="display: block; margin: 0 auto"/>
         <p>
@@ -187,8 +192,12 @@
       <img src="static/images/caustics.png" alt="Examples from CausticsNet" width="100%" />
       <p>
         <br>
-        TODO Write some text here
-      </p>
+      We use neural network to predict the expected reprojection error of an image with a random overlapping image, finding that this is a very effective way of removing caustics.
+      The reprojection error of two overlapping images is computed by using the estimated depths and poses by a monocular SLAM system. For a well-trained SLAM neural networks, the part of the reprojection error coming from mis-estimation of depths and poses is very small compared to the dominant noise caused by the caustics.
+      Training a neural network to predict the expected error for a single image without seeing the other image thus proves an effective way to remove caustics from images. A schematic overview is shown below, for more details, consult the paper.
+      <br>
+      <br>
+    </p>
       <img src="static/images/method_caustics_flat.png" alt="Overview of CausticsNet" width="50%" style="display: block; margin: 0 auto" />
         <h2 class="subtitle has-text-centered">
           
@@ -253,7 +262,14 @@
       <!-- Paper video. -->
       <h2 class="title is-3">Broader Context: AI for Coral Reef Monitoring</h2>
       <div class="content has-text-justified">
-        <p>TODO</p>
+        <p>Advances in computer vision and machine learning are the key to the next generation of coral monitoring tools. 
+          We are dedicated to creating scalable low-cost solutions that automate the tedious part of monitoring and allow us to see the 
+          change of coral reefs in the wake of climate change in unprecedented spatial and temporal resolution by dramatically increasing 
+          the amount of surveys that can be realized. The crucial components to this are semantic segmentation of benthic classes, 
+          and real-time 3D mapping of underwater environments on simple computing devices. The combination of these AI tools are embodied in the 
+          <u><a href="https://josauder.github.io/deepreefmap/">DeepReefMap</a></u> project.
+          The caustics and backscatter alleviation techniques presented in this research are a crucial cornerstone to being able to increase 
+          the quality of real-time 3D mapping techniques for reef environments.</p>
       </div>
           <div class="columns is-centered has-text-centered">
         <div class="column is-four-fifths">
@@ -262,6 +278,7 @@
             <source src="static/videos/sunken_buoy_fast_480.mov"
             type="video/mp4">
           </video>
+          <p>A demo of the real-time 3D semantic mapping tool <u><a href="https://josauder.github.io/deepreefmap/">DeepReefMap</a></u></p>
         </div>
       </div>
     </div>
