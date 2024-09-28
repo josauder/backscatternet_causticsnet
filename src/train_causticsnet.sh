@@ -1,0 +1,16 @@
+python3 train_causticsnet.py \
+--data /path/to/image/dataset \
+--batch_size 14 \
+--num_workers 4 \
+--epochs 300 \
+--lr 0.00002 \
+--max_frame_distance 5 \
+--with_ssim \
+--with_mask \
+--with_auto_mask \
+--padding_mode zeros \
+--photometric_loss_weight 1.0 \
+--smoothness_loss_weight 0.02 \
+--geometric_consistency_loss_weight 0.5 \
+--seed 0 \
+--name CausticsNet
