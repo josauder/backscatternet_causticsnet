@@ -1,9 +1,9 @@
 """Which frames to load so the pose between views can be chained over short hops.
 
-The SC-SfMLearner pose network was trained on frames 3 apart (20 fps), so the pose
+The SC-SfMLearner pose network was trained on frames 3 apart (20 fps). The pose
 between two views further apart is composed from hops of at most ``max_hop`` frames.
-A gap ``g`` is split into ``ceil(g / max_hop)`` hops of near-equal size; with
-``max_hop=3`` every hop of a gap >= 3 is 2 or 3 frames (e.g. 25 = 3*7 + 2*2).
+A gap ``g`` is split into ``ceil(g / max_hop)`` hops of near-equal size. The training
+configs use ``max_hop=4`` (a gap of 25 is four hops of 4 and three of 3).
 """
 
 from __future__ import annotations

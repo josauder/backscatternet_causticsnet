@@ -32,7 +32,7 @@ class SCSfMLearnerGeometry(GeometryProvider):
         hf_repo: str = "EPFL-ECEO/deepreefmap-sfm-net",
         hf_filename: str = "scsfmlearner.pt",
         input_norm: str = "train",
-        max_hop: int | None = 3,
+        max_hop: int | None = 4,
         resnet_layers: int = 18,
         pose_chunk: int = 256,
     ) -> None:

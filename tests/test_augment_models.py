@@ -56,4 +56,4 @@ def test_configs_build_models():
         assert (cfg.views.gap_min, cfg.views.gap_max) == (gap_min, gap_max)
         model = MODELS.build(cfg.model)
         assert isinstance(model, torch.nn.Module)
-        assert OmegaConf.select(cfg, "geometry.max_hop") == 3
+        assert OmegaConf.select(cfg, "geometry.max_hop") == 4
