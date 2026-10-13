@@ -1,0 +1,91 @@
+# Shared defaults for CausticsNet and BackscatterNet. Task configs set `_base_: base.yaml`.
+# Any key can be overridden on the command line, e.g. `train.batch_size=64 wandb.mode=disabled`.
+
+run_name: ???
+seed: 0
+
+paths:
+  data_root: ${oc.env:CB_DATA_ROOT,data}
+  runs_root: ${oc.env:CB_RUNS_ROOT,runs}
+
+data:
+  # Output of caustics_backscatter.data.prepare_frames (manifest.json + sequences/). It may
+  # still be growing: finished sequences are rescanned every epoch and before every eval.
+  root: ${paths.data_root}/red_sea_500
+  image_size: [256, 512]  # H, W (deepreefmap SC-SfMLearner resolution)
+  train_split: train
+  val_split: val
+  num_val_clips: 256
+  poll_s: 60  # wait between checks while no train or val sequence is finished yet
+  # Per-frame class labels written by caustics_backscatter.data.segment_frames
+  # (sequences/<seq>/labels_<tag>/); only labeled sequences are used. null = no labels.
+  labels: coralscapesv2_vitb39
+
+# Clip sampling. Views are separated by gaps (in frames at 20 fps) drawn uniformly
+# from [gap_min, gap_max]. Model inputs and loss targets are view indices; every
+# (input, target) pair with input != target contributes to the loss.
+views:
+  num: 2
+  gap_min: ???
+  gap_max: ???
+  shuffle: true
+  inputs: [0, 1]
+  targets: [0, 1]
+
+geometry:
+  name: scsfmlearner
+  checkpoint: null  # local path; null downloads hf_repo/hf_filename
+  hf_repo: EPFL-ECEO/deepreefmap-sfm-net
+  hf_filename: scsfmlearner.pt
+  input_norm: train  # "train": (x-0.45)/0.225 as in deepreefmap training; "none": raw [0,1]
+  max_hop: 3  # poses between views are chained over hops of at most this many frames
+  resnet_layers: 18
+  pose_chunk: 256
+
+warp:
+  # deepreefmap normalizes pixel coords by (W-1) but samples with align_corners=False;
+  # false keeps the convention the SC-SfMLearner checkpoint was trained with.
+  align_corners: false
+  padding_mode: zeros
+
+# Zero loss weight on these CoralscapesV2 classes in the target view and in the source view
+# reprojected into it. `data.labels=null weighting.name=uniform` disables the masking.
+weighting:
+  name: segmentation
+  zero_classes: [7, 8, 9, 15]  # human, transect tools, fish, transect line (39-class Coralscapes ids)
+
+augment:
+  jitter: {brightness: 0.1, contrast: 0.1, saturation: 0.1, hue: 0.05}  # shared by all views of a clip
+  per_image_jitter: null  # extra independent jitter (style-independence loss)
+  hflip_p: 0.5
+
+train:
+  max_steps: 10000
+  epoch_steps: 1000  # steps per epoch; the train sequences are rescanned between epochs
+  batch_size: 32  # clips (pairs) per step
+  num_workers: 24
+  lr: 2.0e-4
+  betas: [0.9, 0.999]
+  weight_decay: 0.0
+  grad_clip: null
+  amp: bf16  # bf16 | none
+  channels_last: true
+  bn_momentum: 0.01
+  log_every: 50
+  eval_every: 1000
+  keep_step_checkpoints: true
+
+eval:
+  batch_size: 32
+  num_workers: 8
+  num_viz: 8
+  evaluators: []
+
+viz:
+  residual_gain: 2.0
+
+wandb:
+  project: caustics-backscatter
+  entity: null
+  group: null
+  mode: online  # online | offline | disabled

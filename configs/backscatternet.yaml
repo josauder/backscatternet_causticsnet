@@ -1,0 +1,31 @@
+_base_: base.yaml
+
+run_name: backscatternet
+
+task:
+  name: backscatternet
+
+# Frame pairs 3 to 20 frames apart at 20 fps, poses chained over
+# intermediate frames.
+views:
+  gap_min: 3
+  gap_max: 20
+
+model:
+  name: backscatter_global
+  encoder_name: resnext50_32x4d
+  encoder_weights: imagenet
+  head_channels: 256
+  b_inf_init: 0.3
+  beta_init: 1.0
+
+augment:
+  per_image_jitter: {brightness: 0.1, contrast: 0.1, saturation: 0.1, hue: 0.05}
+
+# Eq. 9 with supp. A.3 weights: L_P(D1, D2) + style * L_I + backscatter * L_B + clip * L_[0,1](D)
+loss:
+  ssim_weight: 0.85
+  style: 0.1
+  backscatter: 0.5
+  clip: 1.0
+  far_quantile: 0.95

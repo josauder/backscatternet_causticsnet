@@ -1,0 +1,51 @@
+[project]
+name = "caustics-backscatter"
+version = "0.1.0"
+description = "Re-implementation of CausticsNet and BackscatterNet (Sauder & Tuia, ECCV 2024) on top of the DeepReefMap SC-SfMLearner"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  # Camera rectification, intrinsics scaling and the frozen SC-SfMLearner networks.
+  "deepreefmap",
+  "torch>=2.7,<3",
+  "torchvision>=0.22,<1",
+  "segmentation-models-pytorch>=0.5.0",
+  "kornia>=0.8.0",
+  "omegaconf>=2.3.0",
+  "wandb>=0.20.0",
+  "huggingface_hub>=0.30.0",
+  # Frozen CoralscapesV2 DINOv3 + DPT segmenter (data/segment_frames.py).
+  "transformers>=4.56",
+  "safetensors>=0.4",
+  "numpy>=1.26.0",
+  "opencv-python>=4.10.0.84",
+  "imageio[ffmpeg]>=2.37.3",
+  "tqdm>=4.66.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.4.0"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv.sources]
+deepreefmap = { git = "https://github.com/eceo-epfl/deepreefmap", rev = "2ff4b05a386774ef0e0967e69d59eac850fc8613" }
+torch = [{ index = "pytorch-cu126", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cu126", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[tool.uv]
+# deepreefmap's VGGT-Omega extra pins numpy<2; keep numpy 2.x like deepreefmap does.
+override-dependencies = ["numpy>=1.26.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

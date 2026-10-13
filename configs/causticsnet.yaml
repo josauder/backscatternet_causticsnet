@@ -1,0 +1,41 @@
+_base_: base.yaml
+
+run_name: causticsnet
+
+task:
+  name: causticsnet
+
+train:
+  max_steps: 50000
+  batch_size: 128  # 4x the shared default of 32
+
+# Frame pairs 2 to 5 frames apart at 20 fps.
+views:
+  gap_min: 2
+  gap_max: 5
+
+model:
+  name: smp_dense
+  arch: DeepLabV3Plus
+  encoder_name: resnext50_32x4d
+  encoder_weights: imagenet
+  out_channels: 3
+
+# Eq. 7 with supp. A.2 weights: ||C - R||^2 + tv * TV(C) + l2 * ||C||^2 + clip * L_[0,1](I - C)
+loss:
+  tv: 1.0
+  l2: 0.05
+  clip: 1.0
+
+eval:
+  evaluators:
+    - name: rcaustics
+      root: ${paths.data_root}/rcaustics
+      input_size: [256, 512]  # H, W fed to CausticsNet
+      num_bins: 4000
+      dl_range: [-100.0, 100.0]  # range of the L-channel difference histogram
+      num_workers: 8
+      max_images: null
+      num_viz: 7
+      log_every: 25  # stderr progress line (images done, s/image, ETA, time per stage) every this many images
+      log_first: 3  # also log the per-stage timing of each of the first images
